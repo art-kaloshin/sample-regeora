@@ -33,30 +33,31 @@ class Patient extends Model
                 return Carbon::make($value);
             },
             function (string $value, array $attributes) {
-            $birthday = Carbon::make($value);
-            $attributes['birthday'] = $birthday;
+                $birthday = Carbon::make($value);
+                $attributes['birthday'] = $birthday;
 
-            $diffDays = Carbon::now()->diffInDays($birthday);
-            if ($diffDays <= 30) {
-                $attributes['age'] = $diffDays;
-                $attributes['age_type'] = self::AGE_IN_DAYS;
+                $diffDays = Carbon::now()->diffInDays($birthday);
+                if ($diffDays <= 30) {
+                    $attributes['age'] = $diffDays;
+                    $attributes['age_type'] = self::AGE_IN_DAYS;
+
+                    return $attributes;
+                }
+
+                $diffMonth = Carbon::now()->diffInMonths($birthday);
+                if ($diffMonth <= 12) {
+                    $attributes['age'] = $diffMonth;
+                    $attributes['age_type'] = self::AGE_IN_MONTH;
+
+                    return $attributes;
+                }
+
+                $diffYears = Carbon::now()->diffInYears($birthday);
+                $attributes['age'] = $diffYears;
+                $attributes['age_type'] = self::AGE_IN_YEARS;
 
                 return $attributes;
             }
-
-            $diffMonth = Carbon::now()->diffInMonths($birthday);
-            if ($diffMonth <= 12) {
-                $attributes['age'] = $diffMonth;
-                $attributes['age_type'] = self::AGE_IN_MONTH;
-
-                return $attributes;
-            }
-
-            $diffYears = Carbon::now()->diffInYears($birthday);
-            $attributes['age'] = $diffYears;
-            $attributes['age_type'] = self::AGE_IN_YEARS;
-
-            return $attributes;
-        });
+        );
     }
 }
